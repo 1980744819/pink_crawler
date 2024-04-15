@@ -14,19 +14,12 @@ from proxy import get_proxy
 
 
 def delay():
-    delay = random.randint(3, 10)
+    delay = random.randint(3, 8)
     logger.info(f"delay: {delay} second(s)")
     time.sleep(delay)
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "data", type=str, help="输入要搜索的内容", default="Bp9ksh7EyrNX61GYfqXLB7wFhwg3BNJztgqEtKBwQBaA"
-    )
-    args = parser.parse_args()
-    logger.info(f"search data: {args.data}")
-
+def solve(data):
     ip_address, port, username, pwd = get_proxy()
     driver = create_driver_proxy(
         executable_path="static\chromedriver-win64\chromedriver",
@@ -39,7 +32,7 @@ if __name__ == "__main__":
     #     executable_path=os.path.join(static_dir, "chromedriver-mac-arm64/chromedriver"),
     # )
     driver.get(target_url)
-    driver.implicitly_wait(60)
+    driver.implicitly_wait(30)
     logger.info(f"页面标题: {driver.title}")
     driver.find_element(
         By.XPATH, "//input[@placeholder='Type token symbol, address to find your launchpad']"
@@ -57,7 +50,7 @@ if __name__ == "__main__":
 
     # driver.get("https://www.pinksale.finance")
     # driver.get("https://www.pinksale.finance/solana/launchpad/Bp9ksh7EyrNX61GYfqXLB7wFhwg3BNJztgqEtKBwQBaA")
-    driver.implicitly_wait(60)
+    driver.implicitly_wait(30)
     for a in driver.find_elements(
         By.XPATH, "//*[@id='__next']/div/div[3]/main/div/div/div[2]/div[1]/div[1]/div[1]/div[1]/div[2]/div[3]/a"
     ):
@@ -66,4 +59,18 @@ if __name__ == "__main__":
         logger.info(f"href: {href}")
         a.click()
         delay()
-    time.sleep(60)
+    driver.quit()
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "data", type=str, help="输入要搜索的内容", default="Bp9ksh7EyrNX61GYfqXLB7wFhwg3BNJztgqEtKBwQBaA"
+    )
+    args = parser.parse_args()
+    logger.info(f"search data: {args.data}")
+    while True:
+        try:
+            solve(args.data)
+        except Exception as e:
+            logger.error(e)
