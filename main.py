@@ -29,7 +29,7 @@ if __name__ == "__main__":
 
     ip_address, port, username, pwd = get_proxy()
     driver = create_driver_proxy(
-        executable_path=os.path.join(static_dir, "chromedriver-mac-arm64/chromedriver"),
+        executable_path="static\chromedriver-win64\chromedriver",
         proxy_username=username,
         proxy_password=pwd,
         proxy_ip=ip_address,
