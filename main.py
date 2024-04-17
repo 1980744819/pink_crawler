@@ -19,15 +19,7 @@ def delay():
     time.sleep(delay)
 
 
-def solve(data):
-    ip_address, port, username, pwd = get_proxy()
-    driver = create_driver_proxy(
-        executable_path="static\chromedriver-win64\chromedriver",
-        proxy_username=username,
-        proxy_password=pwd,
-        proxy_ip=ip_address,
-        proxy_port=port,
-    )
+def solve(data, driver):
     # driver = create_driver(
     #     executable_path=os.path.join(static_dir, "chromedriver-mac-arm64/chromedriver"),
     # )
@@ -69,8 +61,20 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     logger.info(f"search data: {args.data}")
+    driver = None
     while True:
         try:
-            solve(args.data)
+            ip_address, port, username, pwd = get_proxy()
+            driver = create_driver_proxy(
+                executable_path="static\chromedriver-win64\chromedriver",
+                proxy_username=username,
+                proxy_password=pwd,
+                proxy_ip=ip_address,
+                proxy_port=port,
+            )
+            solve(args.data, driver)
         except Exception as e:
             logger.error(e)
+        finally:
+            if driver is not None:
+                driver.quit()
